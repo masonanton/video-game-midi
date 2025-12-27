@@ -1,2 +1,2 @@
 # video-game-midi
-A Python-based MIDI controller built with Pygame that provides a customizable, low-latency virtual control surface for real-time interaction with digital audio workstations.
+A virtual interface built with Pygame that allows for a video game controller to act as a MIDI controller. 
