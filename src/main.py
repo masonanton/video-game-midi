@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 from time import sleep
+from n64_controller import N64Controller
 
 try:
     pygame.init()
@@ -14,6 +15,8 @@ while pygame.joystick.get_count() == 0:
 
 joystick = pygame.joystick.Joystick(0)
 joystick.init()
+controller = N64Controller(joystick)
+
 
 print("hats", joystick.get_numhats())
 
@@ -24,22 +27,15 @@ while running:
             running = False
     
     if event.type == pygame.JOYAXISMOTION:
-        print(
-            "Axis 0:", joystick.get_axis(0),
-            "Axis 1:", joystick.get_axis(1),
-            "Axis 2:", joystick.get_axis(2),
-            "Axis 3:", joystick.get_axis(3)
-        )
-
-    if event.type == pygame.JOYBUTTONDOWN:
-        print(
-            event.dict
-        )
-
-    if event.type == pygame.JOYHATMOTION:
-        print(
-            "Hat 0:", joystick.get_hat(0)
-        )
+        controller.process_axis_movement()
+    elif event.type == pygame.JOYBUTTONDOWN:
+        controller.process_button_down(event)
+    elif event.type == pygame.JOYBUTTONUP:
+        controller.process_button_up(event)
+    elif event.type == pygame.JOYHATMOTION:
+        controller.process_hats_movement()
+    
+    print(controller.get_state())
 
 
 
