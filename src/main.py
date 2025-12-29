@@ -2,40 +2,45 @@ import pygame
 from pygame.locals import *
 from time import sleep
 from n64_controller import N64Controller
+from display import Display
 
 try:
     pygame.init()
 except:
     print("Error in intialization.")
 
-while pygame.joystick.get_count() == 0:
-    pygame.event.pump()
-    print("No joystick detected.")
-    sleep(1)
+display = Display(700, 400)
 
-joystick = pygame.joystick.Joystick(0)
-joystick.init()
-controller = N64Controller(joystick)
-
-
-print("hats", joystick.get_numhats())
+controller = None
 
 running = True
 while running:
+
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    
-    if event.type == pygame.JOYAXISMOTION:
-        controller.process_axis_movement()
-    elif event.type == pygame.JOYBUTTONDOWN:
-        controller.process_button_down(event)
-    elif event.type == pygame.JOYBUTTONUP:
-        controller.process_button_up(event)
-    elif event.type == pygame.JOYHATMOTION:
-        controller.process_hats_movement()
-    
-    print(controller.get_state())
+        match event.type:
+            case pygame.QUIT:
+                running = False
+            case pygame.JOYDEVICEADDED:
+                joystick = pygame.joystick.Joystick(event.device_index)
+                controller = N64Controller(joystick)
+            case pygame.JOYDEVICEREMOVED:
+                if controller and event.instance_id == controller.joystick.get_instance_id():
+                    controller = None
+            case pygame.JOYAXISMOTION:
+                controller.process_axis_movement()
+            case pygame.JOYBUTTONDOWN:
+                controller.process_button_down(event)
+            case pygame.JOYBUTTONUP:
+                controller.process_button_up(event)
+            case pygame.JOYHATMOTION:
+                controller.process_hats_movement()
+
+        display.clear()
+
+        if not controller:
+            display.write_text('No controller detected.')
+
+pygame.quit()
 
 
 
