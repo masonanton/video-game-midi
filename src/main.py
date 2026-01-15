@@ -37,8 +37,11 @@ while running:
 
         display.clear()
 
+        controller = N64Controller(None)
         if not controller:
             display.write_text('No controller detected.')
+        else:
+            display.update_state(controller.get_state())
 
 pygame.quit()
 
