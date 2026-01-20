@@ -19,6 +19,10 @@ IMAGE_MAPPINGS = {
     "L": "l.png",
     "R": "r.png",
     "Z": "z.png",
+    "DOWNHAT": "downhat.png",
+    "RIGHTHAT": "righthat.png",
+    "UPHAT": "uphat.png",
+    "LEFTHAT": "lefthat.png"
 }
 
 def create_image(item):
@@ -40,20 +44,34 @@ class Display:
         self.screen.blit(alert, (0, 0))
         pygame.display.flip()
 
-    def display_image(self, image):
+    def display_image(self, name):
+        image = create_image(name)
         self.screen.blit(image, self.top_left)
 
     def update_state(self, state):
-        outline = create_image("outline")
-        self.display_image(outline)
-        for button_name in state["buttons_on"]:
-            button_image = create_image(button_name)
-            self.display_image(button_image)
+        self.display_image("outline")
+        self.display_buttons(state["buttons_on"])
+        self.display_hats(state["hats"])
         pygame.display.flip()
 
     def clear(self):
         self.screen.fill(BLACK)
         pygame.display.flip()
+    
+    def display_buttons(self, buttons_on):
+        for button_name in buttons_on:
+            self.display_image(button_name)
+
+    def display_hats(self, hats):
+        if hats[0] == 1:
+            self.display_image("RIGHTHAT")
+        elif hats[0] == -1:
+            self.display_image("LEFTHAT")
+        if hats[1] == 1:
+            self.display_image("UPHAT")
+        elif hats[1] == -1:
+            self.display_image("DOWNHAT")
+
 
 
     
