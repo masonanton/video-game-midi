@@ -16,7 +16,7 @@ class N64Controller:
         }
 
         self.state = {
-            "buttons_on": set(["START"]),
+            "buttons_on": set(),
             "axis": [0,0],
             "hats": (0,0)
         }

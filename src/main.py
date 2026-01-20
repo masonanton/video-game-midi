@@ -37,7 +37,6 @@ while running:
 
         display.clear()
 
-        controller = N64Controller(None) # fake controller to test while not connected
         if not controller:
             display.write_text('No controller detected.')
         else:

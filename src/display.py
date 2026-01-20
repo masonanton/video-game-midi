@@ -9,17 +9,29 @@ IMAGE_PATH = "imgs"
 
 IMAGE_MAPPINGS = {
     "outline": "outline.png",
-    "START": "start.png"
+    "A": "a.png",
+    "B": "b.png",
+    "CDOWN": "cdown.png",
+    "CRIGHT": "cright.png",
+    "CUP": "cup.png",
+    "CLEFT": "cleft.png",
+    "START": "start.png",
+    "L": "l.png",
+    "R": "r.png",
+    "Z": "z.png",
 }
 
 def create_image(item):
-    return pygame.image.load(os.path.join(IMAGE_PATH, IMAGE_MAPPINGS[item]))
+    return pygame.image.load(os.path.join(IMAGE_PATH, IMAGE_MAPPINGS[item])).convert_alpha()
 class Display:
     def __init__(self, screen_width, screen_height):
         self.screen = pygame.display.set_mode([screen_width, screen_height])
         self.width = screen_width
         self.height = screen_height
-        self.center = self.screen.get_rect().center
+        self.top_left = (
+            (screen_width - 700) // 2, 
+            (screen_height - 400) // 2
+        )
         pygame.display.set_caption("Video Game MIDI Controller")
 
     def write_text(self, text):
@@ -29,12 +41,11 @@ class Display:
         pygame.display.flip()
 
     def display_image(self, image):
-        self.screen.blit(image, image.get_rect(center = self.center))
+        self.screen.blit(image, self.top_left)
 
     def update_state(self, state):
         outline = create_image("outline")
         self.display_image(outline)
-        print(state["buttons_on"])
         for button_name in state["buttons_on"]:
             button_image = create_image(button_name)
             self.display_image(button_image)
