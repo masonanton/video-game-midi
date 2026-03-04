@@ -1,6 +1,8 @@
+from outport import Outport
 class N64Controller:
     def __init__(self, joystick):
         self.joystick = joystick
+        self.outport = Outport()
 
         self.button_map = {
             2: "A",
@@ -25,18 +27,22 @@ class N64Controller:
         x = self.joystick.get_axis(0)
         y = self.joystick.get_axis(1)
         self.state["axis"] = [x,y]
+        # self.outport.send_joystick_movement((x, y))
 
     def process_button_down(self, event):
         button_name = self._event_to_button_name(event)
         self.state["buttons_on"].add(button_name)
+        self.outport.send_button_down(button_name)
     
     def process_button_up(self, event):
         button_name = self._event_to_button_name(event)
         if button_name in self.state["buttons_on"]:
             self.state["buttons_on"].remove(button_name)
+        self.outport.send_button_up(button_name)
 
     def process_hats_movement(self):
         self.state["hats"] = self.joystick.get_hat(0)
+        # self.outport.send_hats_movement(self.state["hats"])
     
     def get_state(self):
         return self.state
