@@ -22,7 +22,8 @@ IMAGE_MAPPINGS = {
     "DOWNHAT": "downhat.png",
     "RIGHTHAT": "righthat.png",
     "UPHAT": "uphat.png",
-    "LEFTHAT": "lefthat.png"
+    "LEFTHAT": "lefthat.png",
+    "AXIS": "axis.png"
 }
 
 def create_image(item):
@@ -44,14 +45,24 @@ class Display:
         self.screen.blit(alert, (0, 0))
         pygame.display.flip()
 
-    def display_image(self, name):
+    def display_image(self, name, location = (0,0)):
         image = create_image(name)
-        self.screen.blit(image, self.top_left)
+        if location == (0,0):
+            self.screen.blit(image, self.top_left)
+        else:
+            # this is not a perfect solution to locating the joystick on the display
+            # it simply multiplies the location by a factor to place it within the larger circle
+            # in reality, this factor should change based on x, y angle (think a triangle)
+            # for now we will keep it
+            new_x = self.top_left[0] + 15 * location[0]
+            new_y = self.top_left[1] + 15 * location[1]
+            self.screen.blit(image, (new_x, new_y))
 
     def update_state(self, state):
         self.display_image("outline")
         self.display_buttons(state["buttons_on"])
         self.display_hats(state["hats"])
+        self.display_axis(state["axis"])
         pygame.display.flip()
 
     def clear(self):
@@ -71,6 +82,10 @@ class Display:
             self.display_image("UPHAT")
         elif hats[1] == -1:
             self.display_image("DOWNHAT")
+
+    def display_axis(self, axis):
+        x,y = axis
+        self.display_image("AXIS", (x,y))
 
 
 
