@@ -43,7 +43,6 @@ class Display:
         font = pygame.font.SysFont('ocraextended',30)
         alert = font.render(text, 1, WHITE)
         self.screen.blit(alert, (0, 0))
-        pygame.display.flip()
 
     def display_image(self, name, location = (0,0)):
         image = create_image(name)
@@ -63,11 +62,9 @@ class Display:
         self.display_buttons(state["buttons_on"])
         self.display_hats(state["hats"])
         self.display_axis(state["axis"])
-        pygame.display.flip()
 
     def clear(self):
         self.screen.fill(BLACK)
-        pygame.display.flip()
     
     def display_buttons(self, buttons_on):
         for button_name in buttons_on:

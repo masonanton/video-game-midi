@@ -11,6 +11,8 @@ except:
 
 display = Display(700, 400)
 
+clock = pygame.time.Clock()
+
 controller = None
 
 running = True
@@ -35,12 +37,15 @@ while running:
             case pygame.JOYHATMOTION:
                 controller.process_hats_movement()
 
-        display.clear()
+    display.clear()
 
-        if not controller:
-            display.write_text('No controller detected.')
-        else:
-            display.update_state(controller.get_state())
+    if not controller:
+        display.write_text('No controller detected.')
+    else:
+        display.update_state(controller.get_state())
+
+    pygame.display.flip()
+    clock.tick(60)
 
 pygame.quit()
 
