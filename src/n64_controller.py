@@ -27,7 +27,7 @@ class N64Controller:
         x = self.joystick.get_axis(0)
         y = self.joystick.get_axis(1)
         self.state["axis"] = [x,y]
-        # self.outport.send_joystick_movement((x, y))
+        self.outport.send_axis_movement((x, y))
 
     def process_button_down(self, event):
         button_name = self._event_to_button_name(event)
@@ -42,7 +42,7 @@ class N64Controller:
 
     def process_hats_movement(self):
         self.state["hats"] = self.joystick.get_hat(0)
-        # self.outport.send_hats_movement(self.state["hats"])
+        self.outport.send_hats_movement(self.state["hats"])
     
     def get_state(self):
         return self.state
