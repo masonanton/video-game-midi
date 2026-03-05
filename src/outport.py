@@ -6,20 +6,20 @@
 import mido
 
 NOTE_MAP = {
-    "A": 60,  # C4
-    "B": 62,  # D4
-    "CUP": 64,  # E4
-    "CDOWN": 65,  # F4
-    "CLEFT": 67,  # G4
+    "A":      60,  # C4
+    "B":      62,  # D4
+    "CUP":    64,  # E4
+    "CDOWN":  65,  # F4
+    "CLEFT":  67,  # G4
     "CRIGHT": 69,  # A4
-    "Z": 71,  # B4
-    "L": 72,  # C5
-    "R": 74,  # D5
-    "START": 76,  # E5
-    "UPHAT": 77,  # F5
-    "DOWNHAT": 79,  # G5
-    "LEFTHAT": 81,  # A5
-    "RIGHTHAT": 83,  # B5
+    "Z":      71,  # B4
+    "L":      72,  # C5
+    "R":      74,  # D5
+    "START":  76,  # E5
+    "UPHAT":    36,  # C2  - kick
+    "DOWNHAT":  40,  # E2  - clap
+    "LEFTHAT":  44,  # G#2 - hi-hat
+    "RIGHTHAT": 46,  # A#2 - crash
 }
 
 AXIS_CHANNELS = {
@@ -59,11 +59,11 @@ class Outport:
         y_midi = axis_to_midi(y)
         
         if x_midi != self.prev_x_midi:
-            self.outport.send(mido.Message('control_change', channel=0, control=AXIS_CHANNELS['x'], value=x_midi))
+            self.outport.send(mido.Message('control_change', channel=1, control=AXIS_CHANNELS['x'], value=x_midi))
             self.prev_x_midi = x_midi
         
         if y_midi != self.prev_y_midi:
-            self.outport.send(mido.Message('control_change', channel=0, control=AXIS_CHANNELS['y'], value=y_midi))
+            self.outport.send(mido.Message('control_change', channel=1, control=AXIS_CHANNELS['y'], value=y_midi))
             self.prev_y_midi = y_midi
 
     def send_hats_movement(self, hats):
@@ -71,23 +71,23 @@ class Outport:
         prev_x, prev_y = self.prev_hats
 
         if x == 1 and prev_x != 1:
-            self.outport.send(mido.Message('note_on', channel=0, note=NOTE_MAP["RIGHTHAT"]))
+            self.outport.send(mido.Message('note_on', channel=2, note=NOTE_MAP["RIGHTHAT"]))
         elif x != 1 and prev_x == 1:
-            self.outport.send(mido.Message('note_off', channel=0, note=NOTE_MAP["RIGHTHAT"]))
+            self.outport.send(mido.Message('note_off', channel=2, note=NOTE_MAP["RIGHTHAT"]))
 
         if x == -1 and prev_x != -1:
-            self.outport.send(mido.Message('note_on', channel=0, note=NOTE_MAP["LEFTHAT"]))
+            self.outport.send(mido.Message('note_on', channel=2, note=NOTE_MAP["LEFTHAT"]))
         elif x != -1 and prev_x == -1:
-            self.outport.send(mido.Message('note_off', channel=0, note=NOTE_MAP["LEFTHAT"]))
+            self.outport.send(mido.Message('note_off', channel=2, note=NOTE_MAP["LEFTHAT"]))
 
         if y == 1 and prev_y != 1:
-            self.outport.send(mido.Message('note_on', channel=0, note=NOTE_MAP["UPHAT"]))
+            self.outport.send(mido.Message('note_on', channel=2, note=NOTE_MAP["UPHAT"]))
         elif y != 1 and prev_y == 1:
-            self.outport.send(mido.Message('note_off', channel=0, note=NOTE_MAP["UPHAT"]))
+            self.outport.send(mido.Message('note_off', channel=2, note=NOTE_MAP["UPHAT"]))
 
         if y == -1 and prev_y != -1:
-            self.outport.send(mido.Message('note_on', channel=0, note=NOTE_MAP["DOWNHAT"]))
+            self.outport.send(mido.Message('note_on', channel=2, note=NOTE_MAP["DOWNHAT"]))
         elif y != -1 and prev_y == -1:
-            self.outport.send(mido.Message('note_off', channel=0, note=NOTE_MAP["DOWNHAT"]))
+            self.outport.send(mido.Message('note_off', channel=2, note=NOTE_MAP["DOWNHAT"]))
 
         self.prev_hats = hats
