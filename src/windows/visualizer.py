@@ -17,22 +17,27 @@ class Visualizer:
         self.height = height
 
         glfw.make_context_current(self.window)
-        glfw.swap_interval(1)  
+        glfw.swap_interval(1)
+        glfw.set_framebuffer_size_callback(self.window, self._on_resize)
+        glViewport(0, 0, width, height)
 
         self.points = [
             (random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(-1, 1))
             for _ in range(10000)
         ]
 
-        self.yaw = 0.0
-        self.pitch = 0.0
-        self.roll = 0.0
-        self.idle_yaw_speed = 0.00
-        self.idle_pitch_speed = 0.00
-
         self.angle_x = 0.0
         self.angle_y = 0.0
         self.angle_z = 0.0
+
+        # Angular velocities
+        self.vel_x = 0.0
+        self.vel_y = 0.0
+        self.vel_z = 0.0
+
+        self.acceleration = 0.4
+        self.max_speed = 6.0
+        self.friction = 0.92
 
         self.wave_x = 0.0
         self.wave_y = 0.0
@@ -41,55 +46,76 @@ class Visualizer:
         self.color = (1.0, 1.0, 1.0)
         self.flash = 0.0
 
+    def _on_resize(self, window, width, height):
+        self.width = width
+        self.height = height
+        glfw.make_context_current(self.window)
+        glViewport(0, 0, width, height)
+
     def update(self, controller_state):
-        self.yaw += self.idle_yaw_speed
-        self.pitch += self.idle_pitch_speed
         self.wave_time += 0.05
 
         if controller_state is None:
+            self._apply_physics()
             return
 
-        buttons = controller_state.get("buttons", set())
-        hats = controller_state.get("hats", (0,0))
-        joystick = controller_state.get("joystick", (0.0, 0.0))
-        
-        if "A" in buttons:
-            self.angle_x += 2.0
-        if "B" in buttons:
-            self.angle_x -= 2.0
-        if "Z" in buttons:
-            self.angle_z -= 2.0
-        if "R" in buttons:
-            self.angle_z += 2.0
-        if "CUP" in buttons:
-            self.angle_y += 2.0
-        if "CDOWN" in buttons:
-            self.angle_y -= 2.0
-        if "CLEFT" in buttons:
-            self.angle_y -= 2.0
-        if "CRIGHT" in buttons:
-            self.angle_y += 2.0
-        if "START" in buttons:
-            self.angle_x = 0.0
-            self.angle_y = 0.0
-            self.angle_z = 0.0
+        buttons = controller_state.get("buttons_on", set())
+        hats = controller_state.get("hats", (0, 0))
+        axis = controller_state.get("axis", [0.0, 0.0])
 
+        if "START" in buttons:
+            self.vel_x = 0.0
+            self.vel_y = 0.0
+            self.vel_z = 0.0
+
+        if "A" in buttons:
+            self.vel_x = min(self.vel_x + self.acceleration, self.max_speed)
+        if "B" in buttons:
+            self.vel_x = max(self.vel_x - self.acceleration, -self.max_speed)
+        if "R" in buttons:
+            self.vel_z = min(self.vel_z + self.acceleration, self.max_speed)
+        if "Z" in buttons:
+            self.vel_z = max(self.vel_z - self.acceleration, -self.max_speed)
+        if "CUP" in buttons:
+            self.vel_y = min(self.vel_y + self.acceleration, self.max_speed)
+        if "CDOWN" in buttons:
+            self.vel_y = max(self.vel_y - self.acceleration, -self.max_speed)
+        if "CLEFT" in buttons:
+            self.vel_y = max(self.vel_y - self.acceleration, -self.max_speed)
+        if "CRIGHT" in buttons:
+            self.vel_y = min(self.vel_y + self.acceleration, self.max_speed)
+
+        # Build color by averaging all active hat directions
+        hat_colors = []
         if hats[1] == 1:
-            self.color = (1.0, 1.0, 1.0)
-            self.flash = 1.0
-        elif hats[1] == -1:
-            self.color = (0.2, 0.4, 1.0)
-            self.flash = 1.0
+            hat_colors.append((1.0, 1.0, 1.0))  # up: white
+        if hats[1] == -1:
+            hat_colors.append((0.2, 0.4, 1.0))  # down: blue
         if hats[0] == -1:
-            self.color = (1.0, 0.2, 0.2)
+            hat_colors.append((1.0, 0.2, 0.2))  # left: red
+        if hats[0] == 1:
+            hat_colors.append((0.2, 1.0, 0.3))  # right: green
+
+        if hat_colors:
+            r = sum(c[0] for c in hat_colors) / len(hat_colors)
+            g = sum(c[1] for c in hat_colors) / len(hat_colors)
+            b = sum(c[2] for c in hat_colors) / len(hat_colors)
+            self.color = (r, g, b)
             self.flash = 1.0
-        elif hats[0] == 1:
-            self.color = (0.2, 1.0, 0.3)
-            self.flash = 1.0
-            
+
         self.flash = max(0.0, self.flash - 0.05)
-        self.wave_x = joystick[0]
-        self.wave_y = joystick[1]
+        self.wave_x = axis[0]
+        self.wave_y = axis[1]
+
+        self._apply_physics()
+
+    def _apply_physics(self):
+        self.angle_x += self.vel_x
+        self.angle_y += self.vel_y
+        self.angle_z += self.vel_z
+        self.vel_x *= self.friction
+        self.vel_y *= self.friction
+        self.vel_z *= self.friction
 
     def render(self):
         glfw.make_context_current(self.window)
@@ -104,11 +130,11 @@ class Visualizer:
 
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
-        glTranslatef(0.0, 0.0, -3.0)
+        glTranslatef(0.0, 0.0, -5.0)
 
-        glRotatef(self.pitch + self.angle_x, 1, 0, 0)
-        glRotatef(self.yaw + self.angle_y, 0, 1, 0)
-        glRotatef(self.roll + self.angle_z, 0, 0, 1)
+        glRotatef(self.angle_x, 1, 0, 0)
+        glRotatef(self.angle_y, 0, 1, 0)
+        glRotatef(self.angle_z, 0, 0, 1)
 
         brightness = min(1.0, 0.75 + self.flash * 0.25)
         r = self.color[0] * brightness
@@ -121,8 +147,8 @@ class Visualizer:
 
         glBegin(GL_POINTS)
         for (px, py, pz) in self.points:
-            distort_y = self.wave_x * 0.3 * math.sin(pz * 4.0 + self.wave_time)
-            distort_x = self.wave_y * 0.3 * math.sin(py * 4.0 + self.wave_time)
+            distort_y = self.wave_x * 0.6 * math.sin(pz * 4.0 + self.wave_time)
+            distort_x = self.wave_y * 0.6 * math.sin(py * 4.0 + self.wave_time)
             glColor4f(r, g, b, 1.0)
             glVertex3f(px + distort_x, py + distort_y, pz)
         glEnd()
