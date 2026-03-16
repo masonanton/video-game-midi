@@ -34,7 +34,7 @@ class KeyboardController:
     def process_axis_movement(self):
         keys = pygame.key.get_pressed()
         x = (1.0 if keys[pygame.K_RIGHT] else 0.0) - (1.0 if keys[pygame.K_LEFT] else 0.0)
-        y = (1.0 if keys[pygame.K_UP] else 0.0) - (1.0 if keys[pygame.K_DOWN] else 0.0)
+        y = (-1.0 if keys[pygame.K_UP] else 0.0) + (1.0 if keys[pygame.K_DOWN] else 0.0)
         self.state["axis"] = [x, y]
 
     def process_hats_movement(self):

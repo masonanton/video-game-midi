@@ -88,13 +88,13 @@ class Visualizer:
         # Build color by averaging all active hat directions
         hat_colors = []
         if hats[1] == 1:
-            hat_colors.append((1.0, 1.0, 1.0))  # up: white
+            hat_colors.append((0.78, 0.52, 0.52))  # up: white
         if hats[1] == -1:
-            hat_colors.append((0.2, 0.4, 1.0))  # down: blue
+            hat_colors.append((0.35, 0.45, 0.62))  # down: blue
         if hats[0] == -1:
-            hat_colors.append((1.0, 0.2, 0.2))  # left: red
+            hat_colors.append((0.72, 0.38, 0.18))  # left: red
         if hats[0] == 1:
-            hat_colors.append((0.2, 1.0, 0.3))  # right: green
+            hat_colors.append((0.45, 0.58, 0.42))  # right: green
 
         if hat_colors:
             r = sum(c[0] for c in hat_colors) / len(hat_colors)

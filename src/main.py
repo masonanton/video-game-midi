@@ -47,7 +47,7 @@ while running:
     display.clear()
 
     if not controller:
-        display.write_text('no controller detected. keyboard in use.')
+        display.write_text('no controller detected. using keyboard.')
         controller_state = keyboard_controller.get_state()
     else:
         display.write_text('n64 controller in use.')
