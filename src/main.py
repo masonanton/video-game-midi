@@ -1,9 +1,9 @@
 import pygame
 from pygame.locals import *
-from time import sleep
-from n64_controller import N64Controller
-from display import Display
-from visualizer import Visualizer
+from controllers.n64_controller import N64Controller
+from controllers.keyboard_controller import KeyboardController
+from windows.display import Display
+from windows.visualizer import Visualizer
 
 try:
     pygame.init()
@@ -12,6 +12,7 @@ except:
 
 display = Display(700, 400)
 visualizer = Visualizer(800, 600)
+keyboard_controller = KeyboardController()
 
 clock = pygame.time.Clock()
 
@@ -38,16 +39,20 @@ while running:
                 controller.process_button_up(event)
             case pygame.JOYHATMOTION:
                 controller.process_hats_movement()
+            case pygame.KEYDOWN:
+                keyboard_controller.process_button_down(event)
+            case pygame.KEYUP:
+                keyboard_controller.process_button_up(event)
 
     display.clear()
 
     if not controller:
         display.write_text('No controller detected.')
-        visualizer.update(None)
+        controller_state = keyboard_controller.get_state()
     else:
         controller_state = controller.get_state()
-        display.update_state(controller_state)
-        visualizer.update(controller_state)
+    display.update_state(controller_state)
+    visualizer.update(controller_state)
 
     pygame.display.flip()
     visualizer.tick()

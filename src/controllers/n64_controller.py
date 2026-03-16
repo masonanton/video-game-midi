@@ -1,4 +1,5 @@
-from outport import Outport
+from midi.outport import Outport
+
 class N64Controller:
     def __init__(self, joystick):
         self.joystick = joystick

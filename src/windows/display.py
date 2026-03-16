@@ -5,7 +5,7 @@ from pygame.locals import *
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
-IMAGE_PATH = "imgs"
+IMAGE_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "imgs")
 
 IMAGE_MAPPINGS = {
     "outline": "outline.png",

@@ -27,8 +27,8 @@ class Visualizer:
         self.yaw = 0.0
         self.pitch = 0.0
         self.roll = 0.0
-        self.idle_yaw_speed = 0.05
-        self.idle_pitch_speed = 0.01
+        self.idle_yaw_speed = 0.00
+        self.idle_pitch_speed = 0.00
 
         self.angle_x = 0.0
         self.angle_y = 0.0
@@ -46,17 +46,13 @@ class Visualizer:
         self.pitch += self.idle_pitch_speed
         self.wave_time += 0.05
 
-        # if controller_state is None:
-        #     return
+        if controller_state is None:
+            return
 
-        # buttons = controller_state.get("buttons", set())
-        # hats = controller_state.get("hats", (0,0))
-        # joystick = controller_state.get("joystick", (0.0, 0.0))
-
-        buttons = ["A"]
-        hats = (1,0)
-        joystick = [0,0]
-
+        buttons = controller_state.get("buttons", set())
+        hats = controller_state.get("hats", (0,0))
+        joystick = controller_state.get("joystick", (0.0, 0.0))
+        
         if "A" in buttons:
             self.angle_x += 2.0
         if "B" in buttons:
