@@ -35,10 +35,8 @@ glfw
 Install with:
 
 ```bash
-pip install pygame mido python-rtmidi PyOpenGL glfw
+pip install -r requirements.txt
 ```
-
-> **Note:** Install `glfw`, not `pyglfw`. The correct package name is `glfw`.
 
 ---
 
@@ -56,7 +54,7 @@ On macOS or Linux, you can create a virtual MIDI port through the OS and update 
 
 ## MIDI mappings
 
-### Buttons → Notes (Channel 0)
+### Buttons → Notes (Channel 0) (These can be changed in the code)
 
 | Button  | MIDI Note | Pitch |
 |---------|-----------|-------|
@@ -151,6 +149,7 @@ project/
 ## Running the project
 
 ```bash
+cd src
 python main.py
 ```
 
