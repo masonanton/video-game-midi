@@ -3,7 +3,7 @@
 Turn an N64 controller into a live musical instrument. Button presses send MIDI notes, the joystick sends continuous control signals, and a 3D visualizer responds to your input in real time.
 
 
-Uploading video game midi.mov…
+https://github.com/user-attachments/assets/ce6de5d5-920d-419e-ae3a-1d80ca5e5c87
 
 
 ---
