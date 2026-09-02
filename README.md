@@ -133,23 +133,6 @@ The 3D visualizer responds to the controller in real time:
 
 ---
 
-## Project structure
-
-```
-project/
-├── main.py                        # Entry point and main loop
-├── controllers/
-│   ├── n64_controller.py          # N64 joystick input + MIDI output
-│   └── keyboard_controller.py     # Keyboard fallback input
-├── midi/
-│   └── outport.py                 # MIDI message sending logic
-└── windows/
-    ├── display.py                 # Pygame controller display window
-    └── visualizer.py             # GLFW + OpenGL 3D visualizer window
-```
-
----
-
 ## Running the project
 
 ```bash
